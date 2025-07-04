@@ -28,17 +28,20 @@ class ReseñaViewSet(viewsets.ModelViewSet):
 # ✅ Vista personalizada para registrar usuarios
 class RegistroView(APIView):
     def post(self, request):
-        username = request.data.get("username")
-        password = request.data.get("password")
+        username = request.data.get('username')
+        password = request.data.get('password')
 
         if not username or not password:
-            return Response({"error": "Todos los campos son obligatorios."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Se requieren 'username' y 'password'."}, status=400)
+
+        if len(password) < 6:
+            return Response({"error": "La contraseña debe tener al menos 6 caracteres."}, status=400)
 
         if User.objects.filter(username=username).exists():
-            return Response({"error": "Este usuario ya existe."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "El usuario ya existe."}, status=400)
 
         user = User.objects.create_user(username=username, password=password)
-        return Response({"mensaje": "Usuario creado exitosamente."}, status=status.HTTP_201_CREATED)
+        return Response({"mensaje": "Usuario creado exitosamente."}, status=201)
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer

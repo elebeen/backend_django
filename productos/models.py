@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=100)
@@ -9,7 +10,11 @@ class Categoria(models.Model):
 class Producto(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField()
-    precio = models.DecimalField(max_digits=8, decimal_places=2)
+    precio = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        validators=[MinValueValidator(0.0)]  # 🔸 Aquí se valida que no sea negativo
+    )
     imagen = models.ImageField(upload_to='productos/', blank=True, null=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='productos')
     disponible = models.BooleanField(default=True)
