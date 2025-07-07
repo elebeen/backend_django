@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=100)
@@ -17,6 +18,10 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.nombre
+
+    def clean(self):
+        if self.precio is not None and self.precio < 0:
+            raise ValidationError({'precio': 'El precio no puede ser negativo.'})
 
 class Reseña(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='resenas')

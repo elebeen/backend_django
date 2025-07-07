@@ -66,10 +66,13 @@ class RegistroView(APIView):
         if not username or not password:
             return Response({"error": "Todos los campos son obligatorios."}, status=status.HTTP_400_BAD_REQUEST)
 
+        if len(password) < 6:
+            return Response({"error": "La contraseña debe tener al menos 6 caracteres."}, status=status.HTTP_400_BAD_REQUEST)
+
         if User.objects.filter(username=username).exists():
             return Response({"error": "Este usuario ya existe."}, status=status.HTTP_400_BAD_REQUEST)
 
-        user = User.objects.create_user(username=username, password=password)
+        User.objects.create_user(username=username, password=password)
         return Response({"mensaje": "Usuario creado exitosamente."}, status=status.HTTP_201_CREATED)
 
 class CustomTokenObtainPairView(TokenObtainPairView):
